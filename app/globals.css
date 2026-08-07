@@ -1,0 +1,47 @@
+@import "tailwindcss" source(none);
+@source ".";
+@source "../components";
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --background: #0b0e14;
+  --foreground: #ededed;
+
+  /* ── Shared design tokens ──────────────────────────────────────
+     Same palette as portal-ai-dashboard, so the two internal-facing
+     apps read as siblings. Adjust here if this app wants its own
+     identity later (e.g. a distinct accent to signal "internal tool"
+     at a glance). */
+  --pai-bg:          #0b0e14;
+  --pai-surface:     #161b22;
+  --pai-blue:        #144afb;
+  --pai-green:       #10b981;
+  --pai-text:        rgba(255,255,255,0.9);
+  --pai-text-dim:    rgba(217,217,217,0.75);
+  --pai-border:      rgba(217,217,217,0.5);
+  --pai-input-bg:    rgba(22,27,34,0.6);
+  --pai-placeholder: #6f6a6a;
+
+  /* ── Status badges ─────────────────────────────────────────────
+     "Complete" reuses --pai-green. "Pending" needed a new pair since
+     nothing in the shared palette covered it yet. */
+  --pai-pending-bg:   #32eaff;
+  --pai-pending-text: #063166;
+  --pai-complete-bg:   var(--pai-green);
+  --pai-complete-text: #ffffff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-heading: var(--font-space-grotesk);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  margin: 0;
+}
