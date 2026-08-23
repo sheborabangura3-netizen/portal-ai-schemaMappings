@@ -1,7 +1,9 @@
 "use client";
 
+import type { DiscoveredField } from "@/lib/types/mapping";
+
 interface MappingTableProps {
-  discoveredFields: string[];
+  discoveredFields: DiscoveredField[];
   mappings: Record<string, string>;
   canonicalVocabulary: string[];
   onChange: (field: string, value: string) => void;
@@ -48,25 +50,40 @@ export default function MappingTable({
       </div>
 
       <div className="divide-y divide-[#353030]">
-        {discoveredFields.map((field) => {
-          const value = mappings[field] ?? "";
+        {discoveredFields.map(({ path, fieldKind }) => {
+          const value = mappings[path] ?? "";
           const isUnmapped = value.trim().length === 0;
 
           return (
             <div
-              key={field}
+              key={path}
               className="flex items-center gap-4 px-5 py-3 transition-colors hover:bg-[#161b22]/50"
             >
-              <span className="flex-1 truncate font-mono text-[14px] text-white/85">
-                {field}
-              </span>
+              <div className="flex flex-1 items-center gap-2 overflow-hidden">
+                <span className="truncate font-mono text-[14px] text-white/85">
+                  {path}
+                </span>
+                {fieldKind === "array" && (
+                  <span
+                    title="Repeating group — can be mapped to a count-like canonical field (e.g. Number of Sittings)"
+                    className="shrink-0 rounded-full px-2 py-0.5 font-heading text-[10px] font-semibold uppercase tracking-wider"
+                    style={{
+                      backgroundColor: "rgba(99,102,241,0.15)",
+                      color: "#818cf8",
+                      border: "1px solid rgba(99,102,241,0.3)",
+                    }}
+                  >
+                    array
+                  </span>
+                )}
+              </div>
               <div className="flex flex-1 items-center gap-2">
                 <input
                   type="text"
                   list="canonical-vocabulary-options"
                   value={value}
                   disabled={disabled}
-                  onChange={(e) => onChange(field, e.target.value)}
+                  onChange={(e) => onChange(path, e.target.value)}
                   placeholder="Unmatched — enter manually"
                   className="h-10 w-full rounded-[8px] border px-3 font-mono text-[14px] text-white outline-none transition-colors focus:border-[var(--pai-blue)] disabled:opacity-50"
                   style={{

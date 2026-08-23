@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { proposeMapping, saveFieldMappings } from "@/lib/actions/mapping";
+import type { DiscoveredField } from "@/lib/types/mapping";
 import type { SchemaMappingStatus } from "@/lib/types/queue";
 import StatusBadge from "./statusBadge";
 import MappingTable from "./mappingTable";
@@ -11,7 +12,7 @@ import CanonicalVocabularyRail from "./canonicalVocabularyRail";
 interface ReviewScreenProps {
   userId: string;
   institutionName: string;
-  discoveredFields: string[];
+  discoveredFields: DiscoveredField[];
   initialMappings: Record<string, string>;
   initialStatus: SchemaMappingStatus;
   canonicalVocabulary: string[];
@@ -96,7 +97,7 @@ export default function ReviewScreen({
               className="h-10 rounded-[8px] px-5 font-heading text-[14px] font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
               style={{ backgroundColor: "var(--pai-blue)" }}
             >
-              {isSaving ? "Saving…" : "Save"}
+              {isSaving ? "Saving" : "Save"}
             </button>
           </div>
         </div>

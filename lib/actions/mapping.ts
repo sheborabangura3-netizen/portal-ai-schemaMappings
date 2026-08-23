@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createMasterDbClient } from "@/lib/supabase/masterDb/server";
 import type { Json } from "@/lib/types/masterDb.types";
 import type { SchemaMappingStatus } from "@/lib/types/queue";
-import type { InstitutionMappingRecord, ProposeMappingResult } from "@/lib/types/mapping";
+import type { DiscoveredField, InstitutionMappingRecord, ProposeMappingResult } from "@/lib/types/mapping";
 
 /**
  * Reads one institution's row for the review screen: raw discovered fields,
@@ -51,15 +51,16 @@ export async function getInstitutionMappingRecord(
  * knows the canonical vocabulary internally.
  */
 export async function proposeMapping(
-  discoveredFields: string[]
+  discoveredFields: DiscoveredField[]
 ): Promise<ProposeMappingResult> {
+  const confirmedPaths = discoveredFields.map((f) => f.path);
   const response = await fetch(process.env.PORTAL_AI_PROPOSE_CANONICAL_MAPPING_URL!, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "X-Internal-Service-Secret": process.env.DASHBOARD_INTERNAL_SECRET!,
     },
-    body: JSON.stringify({ confirmedPaths: discoveredFields }),
+    body: JSON.stringify({ confirmedPaths }),
   });
 
   if (!response.ok) {
@@ -146,19 +147,18 @@ const EXCLUDED_BOOKKEEPING_COLUMNS = new Set([
   "updated_at",
 ]);
 
-// discovered_schema is Json, shaped as { columns: [{ columnName, discoveredPaths: [{ path, source }], ... }], ... }
+// discovered_schema is Json, shaped as { columns: [{ columnName, discoveredPaths: [{ path, source, fieldKind }], ... }], ... }
 // — the dot-path strings live two levels down, not at the top. Flattens
 // every non-bookkeeping column's discoveredPaths into one flat list of
-// paths, e.g. "personal_details.applicantName". This is the exact list
-// that also gets sent to the Match API as confirmedPaths — same array,
-// no separate pass.
-function normalizeDiscoveredSchema(value: Json | null): string[] {
+// DiscoveredField entries including fieldKind, e.g. { path: "personal_details.applicantName", fieldKind: "scalar" }.
+// The same entries (path only) are also sent to the Match API as confirmedPaths.
+function normalizeDiscoveredSchema(value: Json | null): DiscoveredField[] {
   if (!value || typeof value !== "object" || Array.isArray(value)) return [];
 
   const columns = (value as { columns?: unknown }).columns;
   if (!Array.isArray(columns)) return [];
 
-  const paths: string[] = [];
+  const fields: DiscoveredField[] = [];
   for (const column of columns) {
     if (!column || typeof column !== "object") continue;
 
@@ -171,11 +171,15 @@ function normalizeDiscoveredSchema(value: Json | null): string[] {
     if (!Array.isArray(discoveredPaths)) continue;
 
     for (const entry of discoveredPaths) {
-      const path = entry && typeof entry === "object" ? (entry as { path?: unknown }).path : undefined;
-      if (typeof path === "string") paths.push(path);
+      if (!entry || typeof entry !== "object") continue;
+      const path = (entry as { path?: unknown }).path;
+      const rawFieldKind = (entry as { fieldKind?: unknown }).fieldKind;
+      const fieldKind: "scalar" | "array" =
+        rawFieldKind === "array" ? "array" : "scalar";
+      if (typeof path === "string") fields.push({ path, fieldKind });
     }
   }
-  return paths;
+  return fields;
 }
 
 // field_mappings is Json, persisted as an array of pair-objects:

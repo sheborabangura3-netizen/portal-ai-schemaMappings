@@ -1,10 +1,15 @@
 import type { SchemaMappingStatus } from "./queue";
 
+export type DiscoveredField = {
+  path: string;
+  fieldKind: "scalar" | "array";
+};
+
 export interface InstitutionMappingRecord {
   userId: string;
   institutionName: string;
-  /** Flat dot-path strings, e.g. "students.student_id" — from discovered_schema. */
-  discoveredFields: string[];
+  /** Discovered field entries from discovered_schema — includes fieldKind for array badge display. */
+  discoveredFields: DiscoveredField[];
   /** Existing field_mappings, if this institution was already Completed before. */
   existingMappings: Record<string, string>;
   status: SchemaMappingStatus;
