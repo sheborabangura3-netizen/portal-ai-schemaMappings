@@ -2,21 +2,24 @@ import LoginForm from "@/components/auth/loginForm";
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0b0e14] px-4">
-      <div className="flex w-full max-w-[360px] flex-col items-center">
-        <div className="mb-8 flex items-center gap-3">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <circle cx="14" cy="14" r="13" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" />
-            <circle cx="14" cy="14" r="5" fill="rgba(255,255,255,0.7)" />
-          </svg>
-          <span className="font-heading text-[20px] font-medium tracking-wide text-white/80">
-            PORTAL AI
-          </span>
+    <div className="flex min-h-screen items-center justify-center bg-[#0b1420] px-4">
+      <div className="w-full max-w-[400px] rounded-2xl border border-border bg-[#101d2d] p-6 shadow-[var(--shadow-soft)]">
+        <div className="mb-7 flex items-center justify-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-[#152338]">
+            <svg width="18" height="18" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+              <circle cx="14" cy="14" r="11" stroke="#8aa7ff" strokeWidth="1.5" />
+              <circle cx="14" cy="14" r="4" fill="#8aa7ff" />
+            </svg>
+          </div>
+          <span className="text-[18px] font-semibold tracking-[0.14em] text-text">PORTAL AI</span>
         </div>
 
-        <h1 className="mb-6 self-start font-heading text-[22px] font-medium text-white/90">
-          Reviewer Sign In
-        </h1>
+        <div className="mb-5 text-center">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-text-muted">
+            Reviewer access
+          </p>
+          <h1 className="mt-2 text-[28px] font-medium text-text">Sign In</h1>
+        </div>
 
         <LoginForm />
       </div>

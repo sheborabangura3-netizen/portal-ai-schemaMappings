@@ -11,7 +11,7 @@ export default function LoginForm() {
   return (
     <form action={formAction} className="flex w-full flex-col gap-4">
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="email" className="font-heading text-[13px] font-medium text-white/60">
+        <label htmlFor="email" className="text-[12px] font-medium text-text-soft">
           Email
         </label>
         <input
@@ -21,13 +21,12 @@ export default function LoginForm() {
           required
           autoComplete="username"
           disabled={isPending}
-          className="h-11 rounded-[8px] border px-3 font-heading text-[15px] text-white outline-none transition-colors focus:border-[var(--pai-blue)] disabled:opacity-50"
-          style={{ backgroundColor: "var(--pai-input-bg)", borderColor: "var(--pai-border)" }}
+          className="h-10 rounded-lg border border-border bg-[var(--input)] px-3 text-[14px] text-text outline-none transition-colors focus:border-[#6076d7] disabled:opacity-50"
         />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="password" className="font-heading text-[13px] font-medium text-white/60">
+        <label htmlFor="password" className="text-[12px] font-medium text-text-soft">
           Password
         </label>
         <input
@@ -37,13 +36,12 @@ export default function LoginForm() {
           required
           autoComplete="current-password"
           disabled={isPending}
-          className="h-11 rounded-[8px] border px-3 font-heading text-[15px] text-white outline-none transition-colors focus:border-[var(--pai-blue)] disabled:opacity-50"
-          style={{ backgroundColor: "var(--pai-input-bg)", borderColor: "var(--pai-border)" }}
+          className="h-10 rounded-lg border border-border bg-[var(--input)] px-3 text-[14px] text-text outline-none transition-colors focus:border-[#6076d7] disabled:opacity-50"
         />
       </div>
 
       {state.error && (
-        <p className="rounded-[8px] border border-red-500/30 bg-red-500/10 px-3 py-2 font-heading text-[13px] text-red-300">
+        <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-[12px] text-red-200">
           {state.error}
         </p>
       )}
@@ -51,8 +49,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="mt-2 h-11 rounded-[8px] font-heading text-[15px] font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-        style={{ backgroundColor: "var(--pai-blue)" }}
+        className="mt-1 h-10 rounded-lg bg-[#4f73ff] text-[14px] font-medium text-white transition-colors hover:bg-[#4468ea] disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isPending ? "Signing in…" : "Sign In"}
       </button>

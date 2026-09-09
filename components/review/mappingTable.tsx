@@ -10,13 +10,6 @@ interface MappingTableProps {
   disabled?: boolean;
 }
 
-/**
- * Plain text inputs, but backed by a <datalist> against the canonical
- * vocabulary — native autocomplete, no extra dependency, and it still lets
- * a reviewer type a value the API didn't propose and the vocabulary
- * doesn't have yet (the doc's "canonical vocabulary is allowed to grow"
- * case), rather than locking them into a closed dropdown.
- */
 export default function MappingTable({
   discoveredFields,
   mappings,
@@ -26,82 +19,77 @@ export default function MappingTable({
 }: MappingTableProps) {
   if (discoveredFields.length === 0) {
     return (
-      <p className="pt-8 text-center font-heading text-[15px] text-white/40">
+      <p className="pt-8 text-center text-[14px] text-text-muted">
         No discovered fields on this institution's record.
       </p>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-[12px] border border-[#353030]">
+    <div className="overflow-hidden rounded-xl border border-border bg-[#2a2a2a] shadow-[var(--shadow-card)]">
       <datalist id="canonical-vocabulary-options">
         {canonicalVocabulary.map((field) => (
           <option key={field} value={field} />
         ))}
       </datalist>
 
-      <div className="flex bg-[#161b22] px-5 py-3">
-        <span className="flex-1 font-heading text-[13px] font-medium uppercase tracking-wider text-white/50">
-          Institution Field
-        </span>
-        <span className="flex-1 font-heading text-[13px] font-medium uppercase tracking-wider text-white/50">
-          Canonical Field
-        </span>
-      </div>
+      <div className="min-w-[620px]">
+        <div className="grid grid-cols-[1.2fr_1fr] gap-4 border-b border-border bg-[#2f2f2f] px-4 py-2.5">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-text-muted">
+            Institution Field
+          </span>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-text-muted">
+            Canonical Field
+          </span>
+        </div>
 
-      <div className="divide-y divide-[#353030]">
-        {discoveredFields.map(({ path, fieldKind }) => {
-          const value = mappings[path] ?? "";
-          const isUnmapped = value.trim().length === 0;
+        <div className="divide-y divide-border">
+          {discoveredFields.map(({ path, fieldKind }) => {
+            const value = mappings[path] ?? "";
+            const isUnmapped = value.trim().length === 0;
 
-          return (
-            <div
-              key={path}
-              className="flex items-center gap-4 px-5 py-3 transition-colors hover:bg-[#161b22]/50"
-            >
-              <div className="flex flex-1 items-center gap-2 overflow-hidden">
-                <span className="truncate font-mono text-[14px] text-white/85">
-                  {path}
-                </span>
-                {fieldKind === "array" && (
-                  <span
-                    title="Repeating group — can be mapped to a count-like canonical field (e.g. Number of Sittings)"
-                    className="shrink-0 rounded-full px-2 py-0.5 font-heading text-[10px] font-semibold uppercase tracking-wider"
+            return (
+              <div
+                key={path}
+                className="grid grid-cols-[1.2fr_1fr] items-center gap-4 px-4 py-3 transition-colors hover:bg-[#313131]"
+              >
+                <div className="flex min-w-0 items-center gap-2 overflow-hidden">
+                  <span className="truncate font-mono text-[11px] text-text sm:text-[12px]">{path}</span>
+                  {fieldKind === "array" && (
+                    <span
+                      title="Repeating group — can be mapped to a count-like canonical field"
+                      className="shrink-0 rounded-full border border-[#8ca3ff]/40 bg-[#2d3352] px-1.5 py-0.25 text-[7px] font-semibold uppercase tracking-[0.12em] text-[#dfe8ff]"
+                    >
+                      array
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    list="canonical-vocabulary-options"
+                    value={value}
+                    disabled={disabled}
+                    onChange={(e) => onChange(path, e.target.value)}
+                    placeholder="Unmatched — enter manually"
+                    className="h-9 w-full rounded-lg border px-2.5 font-mono text-[11px] text-text outline-none transition-colors focus:border-[#758eff] disabled:opacity-50 sm:text-[12px]"
                     style={{
-                      backgroundColor: "rgba(99,102,241,0.15)",
-                      color: "#818cf8",
-                      border: "1px solid rgba(99,102,241,0.3)",
+                      backgroundColor: "var(--input)",
+                      borderColor: isUnmapped ? "rgba(184, 217, 255, 0.7)" : "rgba(255,255,255,0.12)",
                     }}
-                  >
-                    array
-                  </span>
-                )}
-              </div>
-              <div className="flex flex-1 items-center gap-2">
-                <input
-                  type="text"
-                  list="canonical-vocabulary-options"
-                  value={value}
-                  disabled={disabled}
-                  onChange={(e) => onChange(path, e.target.value)}
-                  placeholder="Unmatched — enter manually"
-                  className="h-10 w-full rounded-[8px] border px-3 font-mono text-[14px] text-white outline-none transition-colors focus:border-[var(--pai-blue)] disabled:opacity-50"
-                  style={{
-                    backgroundColor: "var(--pai-input-bg)",
-                    borderColor: isUnmapped ? "var(--pai-pending-bg)" : "var(--pai-border)",
-                  }}
-                />
-                {isUnmapped && (
-                  <span
-                    title="No canonical match — needs a manual entry"
-                    className="h-2 w-2 shrink-0 rounded-full"
-                    style={{ backgroundColor: "var(--pai-pending-bg)" }}
                   />
-                )}
+                  {isUnmapped && (
+                    <span
+                      title="No canonical match — needs a manual entry"
+                      className="h-2 w-2 shrink-0 rounded-full bg-[#b8d9ff]"
+                    />
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </div>
   );

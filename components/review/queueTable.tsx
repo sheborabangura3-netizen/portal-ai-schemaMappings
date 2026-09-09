@@ -6,32 +6,51 @@ import StatusBadge from "./statusBadge";
 export default function QueueTable({ entries }: { entries: QueueEntry[] }) {
   if (entries.length === 0) {
     return (
-      <p className="pt-8 text-center font-heading text-[15px] text-white/40">
+      <p className="pt-8 text-center text-[14px] text-text-muted">
         No institutions are awaiting review right now.
       </p>
     );
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      {entries.map((entry) => (
-        <Link
-          key={entry.userId}
-          href={`/queue/${entry.userId}`}
-          className="flex h-[68px] w-full items-center rounded-[10px] bg-[#161b22] px-5 text-left transition-opacity hover:opacity-80 active:opacity-60"
-        >
-          <span className="flex-1 truncate pr-4 font-heading text-[16px] font-bold text-white">
-            {entry.userId}
-          </span>
-          <span className="w-[200px] truncate pr-4 font-heading text-[16px] font-bold text-white">
-            {entry.institutionName}
-          </span>
-          <span className="w-[210px] pr-4 font-heading text-[15px] font-bold text-white">
-            {formatDiscoveredAt(entry.discoveredAt)}
-          </span>
-          <StatusBadge status={entry.status} />
-        </Link>
-      ))}
+    <div className="overflow-hidden rounded-xl border border-border bg-[#101d2d] shadow-[var(--shadow-card)]">
+      <div className="hidden grid-cols-[1.1fr_1.3fr_1fr_auto] gap-4 border-b border-border bg-[#121f2d] px-4 py-2.5 md:grid">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-text-muted">
+          User ID
+        </span>
+        <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-text-muted">
+          Institution
+        </span>
+        <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-text-muted">
+          Discovered
+        </span>
+        <span className="justify-self-end text-[10px] font-semibold uppercase tracking-[0.2em] text-text-muted">
+          Status
+        </span>
+      </div>
+
+      <div className="divide-y divide-border">
+        {entries.map((entry) => (
+          <Link
+            key={entry.userId}
+            href={`/queue/${entry.userId}`}
+            className="group flex flex-col gap-2 px-4 py-3 text-left transition-colors hover:bg-[#132132] md:grid md:grid-cols-[1.1fr_1.3fr_1fr_auto] md:items-center md:gap-4 md:px-4 md:py-3"
+          >
+            <span className="truncate font-mono text-[13px] text-text md:text-[13px]">
+              {entry.userId}
+            </span>
+            <span className="truncate text-[15px] font-medium text-text">
+              {entry.institutionName}
+            </span>
+            <span className="text-[12px] text-text-muted">
+              {formatDiscoveredAt(entry.discoveredAt)}
+            </span>
+            <div className="md:justify-self-end">
+              <StatusBadge status={entry.status} />
+            </div>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
