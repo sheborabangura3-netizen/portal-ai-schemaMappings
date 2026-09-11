@@ -131,25 +131,9 @@ function normalizeStatus(status: string): SchemaMappingStatus {
   return status === "Complete" ? "Complete" : "Pending";
 }
 
-// Portal AI's own standard bookkeeping columns — present on every
-// institution's applications table by convention, not part of what the
-// institution's source database actually contains. Named explicitly
-// rather than inferred structurally: nothing in the JSON shape
-// distinguishes these from legitimate flat columns like
-// "enrollment_program", which does need to stay.
-const EXCLUDED_BOOKKEEPING_COLUMNS = new Set([
-  "id",
-  "status",
-  "admission_number",
-  "user_id",
-  "submission_date",
-  "created_at",
-  "updated_at",
-]);
-
 // discovered_schema is Json, shaped as { columns: [{ columnName, discoveredPaths: [{ path, source, fieldKind }], ... }], ... }
 // — the dot-path strings live two levels down, not at the top. Flattens
-// every non-bookkeeping column's discoveredPaths into one flat list of
+// every column's discoveredPaths into one flat list of
 // DiscoveredField entries including fieldKind, e.g. { path: "personal_details.applicantName", fieldKind: "scalar" }.
 // The same entries (path only) are also sent to the Match API as confirmedPaths.
 function normalizeDiscoveredSchema(value: Json | null): DiscoveredField[] {
@@ -162,11 +146,6 @@ function normalizeDiscoveredSchema(value: Json | null): DiscoveredField[] {
   for (const column of columns) {
     if (!column || typeof column !== "object") continue;
 
-    const columnName = (column as { columnName?: unknown }).columnName;
-    if (typeof columnName === "string" && EXCLUDED_BOOKKEEPING_COLUMNS.has(columnName)) {
-      continue;
-    }
-
     const discoveredPaths = (column as { discoveredPaths?: unknown }).discoveredPaths;
     if (!Array.isArray(discoveredPaths)) continue;
 
@@ -174,8 +153,10 @@ function normalizeDiscoveredSchema(value: Json | null): DiscoveredField[] {
       if (!entry || typeof entry !== "object") continue;
       const path = (entry as { path?: unknown }).path;
       const rawFieldKind = (entry as { fieldKind?: unknown }).fieldKind;
-      const fieldKind: "scalar" | "array" =
-        rawFieldKind === "array" ? "array" : "scalar";
+      const fieldKind: DiscoveredField["fieldKind"] =
+        rawFieldKind === "array" || rawFieldKind === "record_identifier"
+          ? rawFieldKind
+          : "scalar";
       if (typeof path === "string") fields.push({ path, fieldKind });
     }
   }

@@ -63,6 +63,14 @@ export default function MappingTable({
                       array
                     </span>
                   )}
+                  {fieldKind === "record_identifier" && (
+                    <span
+                      title="Record identifier"
+                      className="shrink-0 rounded-full border border-[#d6ad68]/40 bg-[#4a3c26] px-1.5 py-0.25 text-[7px] font-semibold uppercase tracking-[0.12em] text-[#f5d99f]"
+                    >
+                      identifier
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2">

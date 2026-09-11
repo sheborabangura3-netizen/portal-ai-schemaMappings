@@ -2,7 +2,7 @@ import type { SchemaMappingStatus } from "./queue";
 
 export type DiscoveredField = {
   path: string;
-  fieldKind: "scalar" | "array";
+  fieldKind: "scalar" | "array" | "record_identifier";
 };
 
 export interface InstitutionMappingRecord {
